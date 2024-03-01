@@ -1,1 +1,31 @@
 - In eventloop/timer.js, what will be the order of execution? Briefly explain the order of execution w.r.t the event loop phases.
+The order of execution will be:
+
+1. `foo(2)` is called.
+2. Inside `foo(2)`, 'foo' is logged.
+3. `setTimeout` is called with a callback to `bar(2)`, but it is placed in the event queue to be executed after all synchronous code.
+4. `baz()` is called and 'baz' is logged.
+5. `foo(1)` is called.
+6. Inside `foo(1)`, 'foo' is logged.
+7. Another `setTimeout` is called with a callback to `bar(1)`, also placed in the event queue.
+8. `baz()` is called again and 'baz' is logged.
+
+Order of Execution w.r.t. Event Loop Phases:
+
+1. **Synchronous Execution Phase**: 
+   - `foo(2)` and `foo(1)` are invoked.
+   - Inside `foo(2)` and `foo(1)`, 'foo' is logged.
+   - `baz()` is invoked in both `foo(2)` and `foo(1)`, logging 'baz'.
+
+2. **Timers Phase**: 
+   - The setTimeout callbacks (both `bar(2)` and `bar(1)`) are placed in the timer queue, but they are not executed immediately because the specified delay is 0 milliseconds.
+
+3. **Polling and I/O Phase**: 
+   - Since there are no I/O operations, this phase is quite short.
+
+4. **Check Phase**: 
+   - In this phase, the timer callbacks are checked to see if their time has expired. Both `bar(2)` and `bar(1)` are ready to execute.
+
+5. **Execution Phase**: 
+   - The timer callbacks `bar(2)` and `bar(1)` are executed in the order they were added to the event queue.
+   - Thus, '2 : bar' is logged first, followed by '1 : bar'.

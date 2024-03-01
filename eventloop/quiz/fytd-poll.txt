@@ -1,1 +1,34 @@
 - In eventloop/poll.js, what will be the order of execution? Briefly explain the order of execution w.r.t the event loop phases.
+In `eventloop/poll.js`, the order of execution will be:
+
+1. `someAsyncOperation()` is called, initiating an asynchronous file read operation.
+2. `foo()` is called.
+3. 'foo' is logged.
+4. `console.log('done')` is executed.
+
+The order of execution w.r.t. Event Loop Phases:
+
+1. **Synchronous Execution Phase**: 
+   - `someAsyncOperation()` and `foo()` are invoked synchronously.
+   - 'foo' is logged immediately.
+   - `console.log('done')` is executed and 'done' is logged.
+
+2. **Polling and I/O Phase**: 
+   - `someAsyncOperation()` initiates an asynchronous file read operation using `fs.readFile()`, which is then delegated to the system kernel for execution.
+
+3. **Check Phase**: 
+   - Since there are no timer callbacks or other immediate operations, this phase is skipped.
+
+4. **Close Callbacks Phase**: 
+   - No relevant close callbacks are available in this scenario, so this phase is skipped as well.
+
+5. **Timers Phase**: 
+   - No timers are set, so this phase is also skipped.
+
+6. **Poll Phase**: 
+   - The event loop enters the poll phase, where it waits for I/O events to be completed.
+
+7. **I/O Callbacks Phase**: 
+   - Eventually, the file read operation initiated by `fs.readFile()` completes. When the file is successfully read, its data is provided to the callback function.
+   - The callback function passed to `fs.readFile()` is executed with the file data.
+   - 'Data: ...' or 'Read Error' is logged depending on whether there was an error in reading the file.

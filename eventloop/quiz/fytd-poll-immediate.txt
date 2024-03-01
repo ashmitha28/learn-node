@@ -1,2 +1,7 @@
 - Explain the order of execution in terms of the event loop for eventloop/immediate.js.
 - Will the order of execution change if timeout is changed to 0? Why or why not?
+If the timeout is changed to 0:
+
+Changing the timeout to 0 would not necessarily change the order of execution.
+ When a timeout is set to 0, it means the callback will be executed as soon as possible, but it still has to wait for the current execution context to finish before it can run. In this case, even if the timeout is set to 0, the while loop with a delay of 10ms will still block the event loop for that duration. Therefore, the setTimeout and setImmediate callbacks will not be executed until after the while loop completes and the current execution context finishes. 
+The order of execution will remain the same.
